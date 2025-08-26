@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_MQTT_URL": "@vite_mqtt_url",
+    "VITE_MQTT_USERNAME": "@vite_mqtt_username",
+    "VITE_MQTT_PASSWORD": "@vite_mqtt_password",
+    "VITE_MQTT_TOPIC": "@vite_mqtt_topic"
+  }
+}

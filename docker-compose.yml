@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  emqx:
+    image: emqx/emqx:5
+    container_name: emqx
+    environment:
+      - EMQX_DASHBOARD__DEFAULT_USERNAME=admin
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=public
+      - EMQX_LISTENERS__WS__DEFAULT__ENABLED=true
+      - EMQX_LISTENERS__WS__DEFAULT__BIND=0.0.0.0:8083
+    ports:
+      - "1883:1883"   # MQTT
+      - "8083:8083"   # MQTT over WebSocket
+      - "18083:18083" # Dashboard
+
+  frontend:
+    build: .
+    container_name: coreui-react
+    ports:
+      - "8080:80"
+    environment:
+      - VITE_MQTT_URL=ws://localhost:8083/mqtt
+      - VITE_MQTT_TOPIC=test/topic
+    depends_on:
+      - emqx 
