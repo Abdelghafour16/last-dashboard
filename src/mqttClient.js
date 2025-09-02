@@ -29,4 +29,4 @@ export const disconnectMqtt = () => {
   }
 }
 
-export const getClient = () => client 
+export const getClient = () => client
