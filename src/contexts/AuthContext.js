@@ -14,10 +14,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Default admin credentials (you can change these)
+  // Default admin credentials from environment variables
+  // In production, replace this with a proper authentication service
   const ADMIN_CREDENTIALS = {
-    username: 'admin',
-    password: 'admin123'
+    username: import.meta.env.VITE_ADMIN_USERNAME || 'admin',
+    password: import.meta.env.VITE_ADMIN_PASSWORD || 'admin123',
   }
 
   useEffect(() => {
@@ -52,12 +53,8 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    loading
+    loading,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

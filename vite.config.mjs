@@ -8,6 +8,19 @@ export default defineConfig(() => {
     base: './',
     build: {
       outDir: 'build',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Separate vendor chunks for better caching
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            coreui: ['@coreui/react', '@coreui/icons-react'],
+            icons: ['@coreui/icons'],
+            mqtt: ['mqtt'],
+            charts: ['chart.js', '@coreui/chartjs', '@coreui/react-chartjs'],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 1000, // Increase limit for icon chunks
     },
     css: {
       postcss: {

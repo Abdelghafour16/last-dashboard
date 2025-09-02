@@ -186,14 +186,21 @@ Code released under [the MIT license](https://github.com/coreui/coreui-free-reac
 
 ## MQTT + Docker Setup
 
-- Set env variables in a `.env` file (copy from below) or via docker-compose:
+- Set env variables in a `.env` file (copy from `.env.example`) or via docker-compose:
 
 ```
 VITE_MQTT_URL=ws://localhost:8083/mqtt
 VITE_MQTT_USERNAME=
 VITE_MQTT_PASSWORD=
 VITE_MQTT_TOPIC=test/topic
+
+# Authentication Configuration (for development only)
+# In production, use a proper authentication service
+VITE_ADMIN_USERNAME=admin
+VITE_ADMIN_PASSWORD=admin123
 ```
+
+**Security Note:** The current authentication system uses simple username/password validation for development purposes. For production deployments, replace this with a proper authentication service (OAuth, JWT, etc.).
 
 ### Run locally
 - Install deps: `npm i`

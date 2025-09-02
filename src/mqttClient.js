@@ -10,16 +10,32 @@ export const connectMqtt = () => {
   if (client && client.connected) {
     return client
   }
-  client = mqtt.connect(brokerUrl, {
-    username: username || undefined,
-    password: password || undefined,
-    reconnectPeriod: 2000,
-    connectTimeout: 10_000,
-    keepalive: 60,
-    clean: true,
-    protocolVersion: 4,
-  })
-  return client
+
+  try {
+    client = mqtt.connect(brokerUrl, {
+      username: username || undefined,
+      password: password || undefined,
+      reconnectPeriod: 2000,
+      connectTimeout: 10_000,
+      keepalive: 60,
+      clean: true,
+      protocolVersion: 4,
+    })
+
+    // Add error handling for connection
+    client.on('error', (error) => {
+      console.error('MQTT connection error:', error)
+    })
+
+    client.on('offline', () => {
+      console.warn('MQTT client is offline')
+    })
+
+    return client
+  } catch (error) {
+    console.error('Failed to create MQTT client:', error)
+    return null
+  }
 }
 
 export const disconnectMqtt = () => {
@@ -29,4 +45,4 @@ export const disconnectMqtt = () => {
   }
 }
 
-export const getClient = () => client 
+export const getClient = () => client
