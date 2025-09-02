@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   // Default admin credentials (you can change these)
   const ADMIN_CREDENTIALS = {
     username: 'admin',
-    password: 'admin123'
+    password: 'admin123',
   }
 
   useEffect(() => {
@@ -52,12 +52,8 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    loading
+    loading,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
