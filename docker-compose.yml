@@ -14,12 +14,20 @@ services:
       - "18083:18083" # Dashboard
 
   frontend:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_MQTT_URL: ${VITE_MQTT_URL:-ws://localhost:8083/mqtt}
+        VITE_MQTT_USERNAME: ${VITE_MQTT_USERNAME:-}
+        VITE_MQTT_PASSWORD: ${VITE_MQTT_PASSWORD:-}
+        VITE_MQTT_TOPIC: ${VITE_MQTT_TOPIC:-test/topic}
     container_name: coreui-react
     ports:
       - "8080:80"
     environment:
-      - VITE_MQTT_URL=ws://localhost:8083/mqtt
-      - VITE_MQTT_TOPIC=test/topic
+      - VITE_MQTT_URL=${VITE_MQTT_URL:-ws://localhost:8083/mqtt}
+      - VITE_MQTT_USERNAME=${VITE_MQTT_USERNAME:-}
+      - VITE_MQTT_PASSWORD=${VITE_MQTT_PASSWORD:-}
+      - VITE_MQTT_TOPIC=${VITE_MQTT_TOPIC:-test/topic}
     depends_on:
       - emqx 
