@@ -55,7 +55,7 @@ const Login = () => {
                   <CForm onSubmit={handleSubmit}>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
-                    
+
                     {error && (
                       <CAlert color="danger" className="mb-3">
                         {error}
@@ -66,8 +66,8 @@ const Login = () => {
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput 
-                        placeholder="Username" 
+                      <CFormInput
+                        placeholder="Username"
                         autoComplete="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
@@ -89,12 +89,7 @@ const Login = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton 
-                          color="primary" 
-                          className="px-4" 
-                          type="submit"
-                          disabled={loading}
-                        >
+                        <CButton color="primary" className="px-4" type="submit" disabled={loading}>
                           {loading ? 'Logging in...' : 'Login'}
                         </CButton>
                       </CCol>
