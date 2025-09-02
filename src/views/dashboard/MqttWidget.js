@@ -1,5 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { CCard, CCardBody, CCardHeader, CBadge, CRow, CCol, CFormInput, CButton } from '@coreui/react'
+import {
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CBadge,
+  CRow,
+  CCol,
+  CFormInput,
+  CButton,
+} from '@coreui/react'
 import { connectMqtt, getClient } from 'src/mqttClient'
 
 const defaultTopic = import.meta.env.VITE_MQTT_TOPIC || 'test/topic'
@@ -19,12 +28,22 @@ const MqttWidget = () => {
 
   useEffect(() => {
     const client = connectMqtt()
+
+    if (!client) {
+      setStatus('error')
+      console.error('Failed to create MQTT client')
+      return
+    }
+
     clientRef.current = client
 
     const handleConnect = () => setStatus('connected')
     const handleReconnect = () => setStatus('reconnecting')
     const handleClose = () => setStatus('disconnected')
-    const handleError = () => setStatus('error')
+    const handleError = (error) => {
+      setStatus('error')
+      console.error('MQTT client error:', error)
+    }
 
     client.on('connect', handleConnect)
     client.on('reconnect', handleReconnect)
@@ -34,6 +53,7 @@ const MqttWidget = () => {
     client.subscribe(topic, { qos: 0 }, (err) => {
       if (err) {
         console.error('Subscribe error', err)
+        setStatus('error')
       }
     })
 
@@ -59,40 +79,81 @@ const MqttWidget = () => {
   const publish = () => {
     const client = getClient()
     if (!client || status !== 'connected' || !payload) return
-    client.publish(topic, payload)
-    setPayload('')
+
+    try {
+      client.publish(topic, payload, (error) => {
+        if (error) {
+          console.error('Publish error:', error)
+        }
+      })
+      setPayload('')
+    } catch (error) {
+      console.error('Failed to publish message:', error)
+    }
   }
 
   return (
     <CCard className="mb-4">
       <CCardHeader>
-        MQTT Live Feed <CBadge color={statusColor} className="ms-2">{status}</CBadge>
+        MQTT Live Feed{' '}
+        <CBadge color={statusColor} className="ms-2">
+          {status}
+        </CBadge>
       </CCardHeader>
       <CCardBody>
         <CRow className="mb-3">
           <CCol md={8}>
-            <CFormInput value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="topic" />
+            <CFormInput
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="topic"
+            />
           </CCol>
           <CCol md={4} className="text-end">
-            <CBadge color="info">Broker: {import.meta.env.VITE_MQTT_URL || 'ws://localhost:8083/mqtt'}</CBadge>
+            <CBadge color="info">
+              Broker: {import.meta.env.VITE_MQTT_URL || 'ws://localhost:8083/mqtt'}
+            </CBadge>
           </CCol>
         </CRow>
         <CRow className="mb-3" xs={{ gutter: 2 }}>
           <CCol md={9}>
-            <CFormInput value={payload} onChange={(e) => setPayload(e.target.value)} placeholder="message to publish" />
+            <CFormInput
+              value={payload}
+              onChange={(e) => setPayload(e.target.value)}
+              placeholder="message to publish"
+            />
           </CCol>
           <CCol md={3}>
-            <CButton color="primary" className="w-100" onClick={publish} disabled={status !== 'connected' || !payload}>
+            <CButton
+              color="primary"
+              className="w-100"
+              onClick={publish}
+              disabled={status !== 'connected' || !payload}
+            >
               Publish
             </CButton>
           </CCol>
         </CRow>
-        <div style={{ maxHeight: 260, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12, border: '1px solid var(--cui-border-color)', borderRadius: 6, padding: 8 }}>
+        <div
+          style={{
+            maxHeight: 260,
+            overflowY: 'auto',
+            fontFamily: 'monospace',
+            fontSize: 12,
+            border: '1px solid var(--cui-border-color)',
+            borderRadius: 6,
+            padding: 8,
+          }}
+        >
           {messages.length === 0 ? (
-            <div className="text-body-secondary">No messages yet. Publish or send to this topic.</div>
+            <div className="text-body-secondary">
+              No messages yet. Publish or send to this topic.
+            </div>
           ) : (
             messages.map((m, i) => (
-              <div key={i}>[{m.ts}] {m.text}</div>
+              <div key={i}>
+                [{m.ts}] {m.text}
+              </div>
             ))
           )}
         </div>
@@ -101,4 +162,4 @@ const MqttWidget = () => {
   )
 }
 
-export default MqttWidget 
+export default MqttWidget
